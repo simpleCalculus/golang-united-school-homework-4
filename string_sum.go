@@ -31,7 +31,7 @@ func isEmpty(str string) bool {
 
 func StringSum(input string) (output string, err error) {
 	if isEmpty(input) {
-		return "", errorEmptyInput
+		return "", fmt.Errorf("error: %w", errorEmptyInput)
 	}
 
 	input = strings.Trim(input, " \t\n")
@@ -49,7 +49,7 @@ func StringSum(input string) (output string, err error) {
 	} else if strings.Contains(input, "-") {
 		sum = calculate(input, '-')
 	} else {
-		return "0", fmt.Errorf("not valid string")
+		return "", fmt.Errorf("error: %w", errorNotTwoOperands)
 	}
 
 	if sum.err != nil {
