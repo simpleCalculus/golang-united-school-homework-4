@@ -2,6 +2,9 @@ package string_sum
 
 import (
 	"errors"
+	"fmt"
+	"strconv"
+	"strings"
 )
 
 //use these errors as appropriate, wrapping them with fmt.Errorf function
@@ -22,6 +25,75 @@ var (
 //
 // Use the errors defined above as described, again wrapping into fmt.Errorf
 
+func isEmpty(str string) bool {
+	return len(strings.Trim(str, " \t\n")) == 0
+}
+
 func StringSum(input string) (output string, err error) {
-	return "", nil
+	if isEmpty(input) {
+		return "", errorEmptyInput
+	}
+
+	input = strings.Trim(input, " \t\n")
+	var firstNumSign = 1
+	if input[0] == '+' {
+		input = input[1:]
+	} else if input[0] == '-' {
+		input = input[1:]
+		firstNumSign = -1
+	}
+
+	var sum Sum
+	if strings.Contains(input, "+") {
+		sum = calculate(input, '+')
+	} else if strings.Contains(input, "-") {
+		sum = calculate(input, '-')
+	} else {
+		return "0", fmt.Errorf("not valid string")
+	}
+
+	if sum.err != nil {
+		return "", sum.err
+	}
+
+	return strconv.Itoa(firstNumSign*sum.firstNum + sum.secondNum), nil
+}
+
+func getNumber(str string) (int, error) {
+	str = strings.Trim(str, " \t\n")
+	return strconv.Atoi(str)
+}
+
+func calculate(input string, operand byte) (sum Sum) {
+	strNums := strings.Split(input, string(operand))
+	if len(strNums) != 2 {
+		sum.err = errorNotTwoOperands
+		return
+	}
+
+	num1, err := getNumber(strNums[0])
+	if err != nil {
+		sum.err = fmt.Errorf("The first number is not a valid integer, error = %w", err)
+		return
+	}
+
+	num2, err := getNumber(strNums[1])
+	if err != nil {
+		sum.err = fmt.Errorf("The first number is not a valid integer, error = %w", err)
+		return
+	}
+
+	sum.firstNum = num1
+	if operand == '-' {
+		sum.secondNum = -1 * num2
+	} else {
+		sum.secondNum = num2
+	}
+	return sum
+}
+
+type Sum struct {
+	firstNum  int
+	secondNum int
+	err       error
 }
