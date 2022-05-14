@@ -67,7 +67,7 @@ func getNumber(str string) (int, error) {
 func calculate(input string, operand byte) (sum Sum) {
 	strNums := strings.Split(input, string(operand))
 	if len(strNums) != 2 {
-		sum.err = errorNotTwoOperands
+		sum.err = fmt.Errorf("error in calculate(): %w", errorNotTwoOperands)
 		return
 	}
 
